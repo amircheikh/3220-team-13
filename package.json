@@ -12,6 +12,7 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/material": "^6.1.4",
+    "@vercel/postgres": "^0.10.0",
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "next": "14.2.15",
     "react": "^18",
