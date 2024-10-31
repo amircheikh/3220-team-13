@@ -1,0 +1,35 @@
+export interface MapMarkerData {
+  PX: number | null;
+  MAIN_STREET: string;
+  MIDBLOCK_ROUTE: string;
+  SIDE1_STREET: string;
+  SIDE2_STREET: string;
+  PRIVATE_ACCESS: string;
+  ADDITIONAL_INFO: string;
+  ACTIVATIONDATE: Date | null;
+  SIGNALSYSTEM: string;
+  NON_SYSTEM: string;
+  CONTROL_MODE: string;
+  PEDWALKSPEED: string;
+  APS_OPERATION: string;
+  NUMBEROFAPPROACHES: number | null;
+  OBJECTID: number | null;
+  GEO_ID: number | null;
+  NODE_ID: number | null;
+  AUDIBLEPEDSIGNAL: boolean;
+  TRANSIT_PREEMPT: boolean;
+  FIRE_PREEMPT: boolean;
+  RAIL_PREEMPT: boolean;
+  MI_PRINX: number | null;
+  BICYCLE_SIGNAL: boolean;
+  UPS: boolean;
+  LED_BLANKOUT_SIGN: boolean;
+  LPI_NORTH_IMPLEMENTATION_DATE: Date | null;
+  LPI_SOUTH_IMPLEMENTATION_DATE: Date | null;
+  LPI_EAST_IMPLEMENTATION_DATE: Date | null;
+  LPI_WEST_IMPLEMENTATION_DATE: Date | null;
+  LPI_COMMENT: string;
+  coordinates: string;
+  isRedLightCamera: boolean;
+  isUserAdded: boolean;
+}

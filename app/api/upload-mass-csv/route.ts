@@ -4,17 +4,17 @@ import csv from 'csv-parser';
 import fs from 'fs';
 import path from 'path';
 import { parseInteger, parseDate } from '../utils';
+import { MapMarkerData } from '../types';
 
 const csvFilePath = path.resolve('signals.csv'); // This is the path to the csv file that will be uploaded. Note: this file can be deleted after the endpoint runs since all the data will be stored on our database
 
 // This endpoint was used to originally populate the MapMarkerData table from the csv file provided by the City of Toronto. We used the 'traffic signals' csv file since this has all 2000+ traffic signals in Toronto.
-export async function GET() {
+export async function GET(): Promise<Response> {
   // We want to disable the endpoint right now in order to prevent uploading duplicate data by accident
   console.error('This endpoint is disabled');
-  NextResponse.json({ error: 'This endpoint is disabled' }, { status: 500 });
-  return;
+  return NextResponse.json({ error: 'This endpoint is disabled' }, { status: 500 });
 
-  const results: any[] = [];
+  const results: MapMarkerData[] = [];
 
   return new Promise((resolve, reject) => {
     fs.createReadStream(csvFilePath)
@@ -74,13 +74,13 @@ export async function GET() {
               )
               VALUES (
                 ${row.PX}, ${row.MAIN_STREET}, ${row.MIDBLOCK_ROUTE}, ${row.SIDE1_STREET}, 
-                ${row.SIDE2_STREET}, ${row.PRIVATE_ACCESS}, ${row.ADDITIONAL_INFO}, ${row.ACTIVATIONDATE}, 
+                ${row.SIDE2_STREET}, ${row.PRIVATE_ACCESS}, ${row.ADDITIONAL_INFO}, ${row.ACTIVATIONDATE as any}, 
                 ${row.SIGNALSYSTEM}, ${row.NON_SYSTEM}, ${row.CONTROL_MODE}, ${row.PEDWALKSPEED}, ${row.APS_OPERATION}, 
                 ${row.NUMBEROFAPPROACHES}, ${row.OBJECTID}, ${row.GEO_ID}, ${row.NODE_ID}, 
                 ${row.AUDIBLEPEDSIGNAL}, ${row.TRANSIT_PREEMPT}, ${row.FIRE_PREEMPT}, ${row.RAIL_PREEMPT}, 
                 ${row.MI_PRINX}, ${row.BICYCLE_SIGNAL}, ${row.UPS}, ${row.LED_BLANKOUT_SIGN}, 
-                ${row.LPI_NORTH_IMPLEMENTATION_DATE}, ${row.LPI_SOUTH_IMPLEMENTATION_DATE}, 
-                ${row.LPI_EAST_IMPLEMENTATION_DATE}, ${row.LPI_WEST_IMPLEMENTATION_DATE}, 
+                ${row.LPI_NORTH_IMPLEMENTATION_DATE as any}, ${row.LPI_SOUTH_IMPLEMENTATION_DATE as any}, 
+                ${row.LPI_EAST_IMPLEMENTATION_DATE as any}, ${row.LPI_WEST_IMPLEMENTATION_DATE as any}, 
                 ${row.LPI_COMMENT}, ${row.coordinates}, ${row.isRedLightCamera}, ${row.isUserAdded}
               );
             `;
