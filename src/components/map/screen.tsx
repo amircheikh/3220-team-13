@@ -19,7 +19,7 @@ interface MapProps {
 export function Map(props: MapProps) {
   const { markers } = props;
 
-  const [showEditMarkerDialog, setShowEditMarkerDialog] = useState(true);
+  const [showEditMarkerDialog, setShowEditMarkerDialog] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<MapMarkerData>();
 
   const handleEditMarker = (marker: MapMarkerData) => {
