@@ -1,4 +1,5 @@
 export interface MapMarkerData {
+  id?: number;
   PX: number | null;
   MAIN_STREET: string;
   MIDBLOCK_ROUTE: string;
