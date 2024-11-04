@@ -1,6 +1,6 @@
 import { MapMarkerData } from '@/app/api/types';
 import { EditLocationAlt } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { IconButton, Portal } from '@mui/material';
 import { PopupProps as RLPopupProps, Popup as RLPopup } from 'react-leaflet';
 
 interface PopupProps extends RLPopupProps {
@@ -13,22 +13,16 @@ export function Popup(props: PopupProps) {
 
   return (
     <RLPopup closeButton={false} {...props}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 4,
-        }}
-      >
-        <h6>Marker Details</h6>
+      <div className='flex items-center gap-1'>
+        <h1 className='text-2xl'>Marker Details</h1>
         <IconButton onClick={() => onEditMarker(markerData)}>
           <EditLocationAlt />
         </IconButton>
       </div>
 
-      <ul style={{ marginTop: 6, maxHeight: 240, overflowY: 'scroll' }}>
+      <ul className='mt-1.5 space-y-1 max-h-60 overflow-y-scroll'>
         {Object.entries(markerData).map(([key, value]) => (
-          <li style={{ marginTop: 2 }} key={key}>
+          <li key={key}>
             <div>
               <strong>{key}</strong>: {typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value}
             </div>
