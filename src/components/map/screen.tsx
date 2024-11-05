@@ -7,10 +7,14 @@ import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css';
 import 'leaflet-defaulticon-compatibility';
+
 import { MapMarkerData } from '@/app/api/types';
 import { Popup } from '../marker/popup';
 import { EditMarkerDialog } from '../marker/edit';
 import { useState } from 'react';
+import { EditFilterDialog } from '../filter/edit';
+import { Fab } from '@mui/material';
+import { FilterAlt } from '@mui/icons-material';
 
 interface MapProps {
   markers: MapMarkerData[] | undefined;
@@ -20,7 +24,13 @@ export function Map(props: MapProps) {
   const { markers } = props;
 
   const [showEditMarkerDialog, setShowEditMarkerDialog] = useState(false);
+  const [showEditFilterDialog, setShowEditFilterDialog] = useState(false);
+
   const [selectedMarker, setSelectedMarker] = useState<MapMarkerData>();
+
+  const [fliterSettings, setFilterSettings] = useState({
+    markerLimit: [0, 300],
+  });
 
   const handleEditMarker = (marker: MapMarkerData) => {
     setShowEditMarkerDialog(true);
@@ -43,8 +53,9 @@ export function Map(props: MapProps) {
       />
 
       {markers &&
-        //TODO: Slice the list to the amount of markers the user specifies. See comments in query component
-        markers.map((markerData) => {
+        //TODO: Make marker loading state
+
+        markers.slice(fliterSettings.markerLimit[0], fliterSettings.markerLimit[1]).map((markerData) => {
           const id = markerData.id;
           const coordinates = markerData.coordinates && (markerData.coordinates[0] as any); //Yucky
 
@@ -61,6 +72,28 @@ export function Map(props: MapProps) {
         marker={selectedMarker}
         onClose={() => setShowEditMarkerDialog(false)}
       />
+
+      <EditFilterDialog
+        open={showEditFilterDialog}
+        currentFilterSettings={fliterSettings}
+        totalMarkers={markers?.length ?? 0}
+        onClose={() => setShowEditFilterDialog(false)}
+        onSubmit={(newFilterSettings) => {
+          setFilterSettings(newFilterSettings);
+          setShowEditFilterDialog(false);
+        }}
+      />
+
+      <Fab
+        style={{ position: 'absolute', top: 12, right: 12 }}
+        variant='extended'
+        size='medium'
+        color='primary'
+        onClick={() => setShowEditFilterDialog(true)}
+      >
+        <FilterAlt sx={{ mr: 1 }} />
+        Filter
+      </Fab>
     </MapContainer>
   );
 }

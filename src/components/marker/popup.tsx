@@ -1,6 +1,6 @@
 import { MapMarkerData } from '@/app/api/types';
 import { EditLocationAlt } from '@mui/icons-material';
-import { IconButton, Portal } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { PopupProps as RLPopupProps, Popup as RLPopup } from 'react-leaflet';
 
 interface PopupProps extends RLPopupProps {
