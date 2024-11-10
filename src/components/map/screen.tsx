@@ -18,10 +18,11 @@ import { FilterAlt } from '@mui/icons-material';
 
 interface MapProps {
   markers: MapMarkerData[] | undefined;
+  onUpsertMarker: (newMarker: MapMarkerData) => Promise<void>;
 }
 
 export function Map(props: MapProps) {
-  const { markers } = props;
+  const { markers, onUpsertMarker } = props;
 
   const [showEditMarkerDialog, setShowEditMarkerDialog] = useState(false);
   const [showEditFilterDialog, setShowEditFilterDialog] = useState(false);
@@ -57,7 +58,7 @@ export function Map(props: MapProps) {
 
         markers.slice(fliterSettings.markerLimit[0], fliterSettings.markerLimit[1]).map((markerData) => {
           const id = markerData.id;
-          const coordinates = markerData.coordinates && (markerData.coordinates[0] as any); //Yucky
+          const coordinates = markerData.coordinates && (markerData.coordinates[0] as any); //Yucky (see comment in /app/api/types.ts)
 
           if (coordinates)
             return (
@@ -71,6 +72,7 @@ export function Map(props: MapProps) {
         open={showEditMarkerDialog}
         marker={selectedMarker}
         onClose={() => setShowEditMarkerDialog(false)}
+        onSubmit={onUpsertMarker}
       />
 
       <EditFilterDialog

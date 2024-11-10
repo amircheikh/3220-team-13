@@ -7,8 +7,8 @@ export async function GET(request: Request) {
 
   try {
     let response: QueryResultRow[];
-    if (count) response = (await sql`SELECT * FROM MapMarkerData LIMIT ${parseInt(count)};`).rows;
-    else response = (await sql`SELECT * FROM MapMarkerData;`).rows;
+    if (count) response = (await sql`SELECT * FROM MapMarkerData LIMIT ${parseInt(count)} ORDER BY id;`).rows;
+    else response = (await sql`SELECT * FROM MapMarkerData ORDER BY id;`).rows;
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {

@@ -1,36 +1,41 @@
 export interface MapMarkerData {
   id?: number;
-  PX: number | null;
-  MAIN_STREET: string;
-  MIDBLOCK_ROUTE: string;
-  SIDE1_STREET: string;
-  SIDE2_STREET: string;
-  PRIVATE_ACCESS: string;
-  ADDITIONAL_INFO: string;
-  ACTIVATIONDATE: Date | null;
-  SIGNALSYSTEM: string;
-  NON_SYSTEM: string;
-  CONTROL_MODE: string;
-  PEDWALKSPEED: string;
-  APS_OPERATION: string;
-  NUMBEROFAPPROACHES: number | null;
-  OBJECTID: number | null;
-  GEO_ID: number | null;
-  NODE_ID: number | null;
-  AUDIBLEPEDSIGNAL: boolean;
-  TRANSIT_PREEMPT: boolean;
-  FIRE_PREEMPT: boolean;
-  RAIL_PREEMPT: boolean;
-  MI_PRINX: number | null;
-  BICYCLE_SIGNAL: boolean;
-  UPS: boolean;
-  LED_BLANKOUT_SIGN: boolean;
-  LPI_NORTH_IMPLEMENTATION_DATE: Date | null;
-  LPI_SOUTH_IMPLEMENTATION_DATE: Date | null;
-  LPI_EAST_IMPLEMENTATION_DATE: Date | null;
-  LPI_WEST_IMPLEMENTATION_DATE: Date | null;
-  LPI_COMMENT: string;
+  px: number | null;
+  main_street: string;
+  midblock_route: string;
+  side1_street: string;
+  side2_street: string;
+  private_access: string;
+  additional_info: string;
+  activationdate: Date | null;
+  signalsystem: string;
+  non_system: string;
+  control_mode: string;
+  pedwalkspeed: string;
+  aps_operation: string;
+  numberofapproaches: number | null;
+  objectid: number | null;
+  geo_id: number | null;
+  node_id: number | null;
+  audiblepedsignal: boolean;
+  transit_preempt: boolean;
+  fire_preempt: boolean;
+  rail_preempt: boolean;
+  mi_prinx: number | null;
+  bicycle_signal: boolean;
+  ups: boolean;
+  led_blankout_sign: boolean;
+  lpi_north_implementation_date: Date | null;
+  lpi_south_implementation_date: Date | null;
+  lpi_east_implementation_date: Date | null;
+  lpi_west_implementation_date: Date | null;
+  lpi_comment: string;
+
+  // Coordinates are very weird since they're stored in the db as: '[[x, y]]'. Not sure why this happened when originally uploading all the markers. So you'll notice throughout the code that accesing x and y coordinates is a little strange:
+  // x coordinate: marker.coordinates[0][0]
+  // y coordinate: marker.coordinates[0][1]
   coordinates: string;
-  isRedLightCamera: boolean;
-  isUserAdded: boolean;
+
+  isredlightcamera: boolean;
+  isuseradded: boolean;
 }
