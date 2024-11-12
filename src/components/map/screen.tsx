@@ -11,18 +11,20 @@ import 'leaflet-defaulticon-compatibility';
 import { MapMarkerData } from '@/app/api/types';
 import { Popup } from '../marker/popup';
 import { EditMarkerDialog } from '../marker/edit';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { EditFilterDialog } from '../filter/edit';
 import { Fab } from '@mui/material';
 import { FilterAlt } from '@mui/icons-material';
+import { LeafletMouseEvent, Map as RLMap } from 'leaflet';
 
 interface MapProps {
   markers: MapMarkerData[] | undefined;
   onUpsertMarker: (newMarker: MapMarkerData) => Promise<void>;
+  onDeleteMarker: (id: number) => Promise<void>;
 }
 
 export function Map(props: MapProps) {
-  const { markers, onUpsertMarker } = props;
+  const { markers, onUpsertMarker, onDeleteMarker } = props;
 
   const [showEditMarkerDialog, setShowEditMarkerDialog] = useState(false);
   const [showEditFilterDialog, setShowEditFilterDialog] = useState(false);
@@ -33,16 +35,30 @@ export function Map(props: MapProps) {
     markerLimit: [0, 300],
   });
 
+  const mapRef = useRef<RLMap>(); // Ref used for doubleclick listener
+
   const handleEditMarker = (marker: MapMarkerData) => {
     setShowEditMarkerDialog(true);
     setSelectedMarker(marker);
   };
 
+  const handleAddMarker = (mouseEvent: LeafletMouseEvent) => {
+    const lat = mouseEvent.latlng.lat;
+    const long = mouseEvent.latlng.lng;
+
+    setSelectedMarker({ coordinates: [[long, lat]] as any } as MapMarkerData);
+    setShowEditMarkerDialog(true);
+  };
+
+  mapRef.current?.on('dblclick', handleAddMarker); // Add an doubleclick listener to the map
+
   return (
     <MapContainer
+      ref={mapRef as any}
       center={[43.742869999215117, -79.455459999623258]}
       zoom={11}
       scrollWheelZoom={true}
+      doubleClickZoom={false}
       //TODO: Add bounds and max/min zoom
 
       //Defined w/h is importaint
@@ -73,6 +89,7 @@ export function Map(props: MapProps) {
         marker={selectedMarker}
         onClose={() => setShowEditMarkerDialog(false)}
         onSubmit={onUpsertMarker}
+        onDeleteMarker={onDeleteMarker}
       />
 
       <EditFilterDialog

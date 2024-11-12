@@ -31,9 +31,9 @@ export interface MapMarkerData {
   lpi_west_implementation_date: Date | null;
   lpi_comment: string;
 
-  // Coordinates are very weird since they're stored in the db as: '[[x, y]]'. Not sure why this happened when originally uploading all the markers. So you'll notice throughout the code that accesing x and y coordinates is a little strange:
-  // x coordinate: marker.coordinates[0][0]
-  // y coordinate: marker.coordinates[0][1]
+  // Coordinates are very weird since they're stored in the db as: '[[longitude, latitude]]'. Not sure why this happened when originally uploading all the markers. So you'll notice throughout the code that accesing lat and long coordinates is a little strange:
+  // long coordinate: marker.coordinates[0][0]
+  // lat coordinate: marker.coordinates[0][1]
   coordinates: string;
 
   isredlightcamera: boolean;

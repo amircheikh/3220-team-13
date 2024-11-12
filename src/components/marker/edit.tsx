@@ -20,14 +20,15 @@ import { MapMarkerData } from '@/app/api/types';
 
 interface EditMarkerDialogProps {
   open: boolean;
-  marker?: MapMarkerData; // If marker is not passed in, we treat this screen as an 'Add Marker' screen
+  marker?: MapMarkerData; // If marker, or marker.id, is not passed in, we treat this screen as an 'Add Marker' screen
   onClose: VoidFunction;
   onSubmit: (newMarker: MapMarkerData) => Promise<void>;
+  onDeleteMarker: (id: number) => Promise<void>;
 }
 
 // TODO: This screen is really slow when changing any field, especially typing. This is probably because we are updating the newMarker state every time the field is edited. FIND A BETTER WAY TO DO THIS!
 export function EditMarkerDialog(props: EditMarkerDialogProps) {
-  const { open, marker, onClose, onSubmit } = props;
+  const { open, marker, onClose, onSubmit, onDeleteMarker } = props;
 
   const emptyMarker = {} as MapMarkerData; // We use this empty marker when adding a new marker
 
@@ -45,9 +46,9 @@ export function EditMarkerDialog(props: EditMarkerDialogProps) {
   // Updating coordinates is a little weird so we need this function to handle it (see comment in /app/api/types.ts)
   const handleCoordinateChange = (axis: 'x' | 'y', value: string) => {
     if (axis == 'x') {
-      handleFieldChange('coordinates', [[value, newMarker.coordinates[0][1]]]);
-    } else {
       handleFieldChange('coordinates', [[newMarker.coordinates[0][0], value]]);
+    } else {
+      handleFieldChange('coordinates', [[value, newMarker.coordinates[0][1]]]);
     }
   };
 
@@ -55,6 +56,13 @@ export function EditMarkerDialog(props: EditMarkerDialogProps) {
   const handleSubmit = async () => {
     setIsLoading(true);
     await onSubmit(newMarker);
+    setIsLoading(false);
+    onClose();
+  };
+
+  const handleDeleteMarker = async () => {
+    setIsLoading(true);
+    await onDeleteMarker(newMarker.id!);
     setIsLoading(false);
     onClose();
   };
@@ -67,7 +75,7 @@ export function EditMarkerDialog(props: EditMarkerDialogProps) {
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{marker ? `Edit Marker: ${marker.id}` : 'Add Marker'}</DialogTitle>
+      <DialogTitle>{marker && marker.id ? `Edit Marker: ${marker.id}` : 'Add Marker'}</DialogTitle>
 
       <DialogContent>
         <DialogContentText style={{ marginBottom: 16 }}>Use the form below to edit marker details.</DialogContentText>
@@ -76,18 +84,18 @@ export function EditMarkerDialog(props: EditMarkerDialogProps) {
         <Grid container spacing={2} alignItems='center'>
           <Grid size={6}>
             <TextField
-              label='X Coordinate'
+              label='Latitude'
               type='number'
-              value={newMarker.coordinates ? newMarker.coordinates[0][0] : ''} //see comment in /app/api/types.ts
+              value={newMarker.coordinates ? newMarker.coordinates[0][1] : ''} //see comment in /app/api/types.ts
               onChange={(e) => handleCoordinateChange('x', e.target.value)}
               fullWidth
             />
           </Grid>
           <Grid size={6}>
             <TextField
-              label='Y Coordinate'
+              label='Longitude'
               type='number'
-              value={newMarker.coordinates ? newMarker.coordinates[0][1] : ''} //see comment in /app/api/types.ts
+              value={newMarker.coordinates ? newMarker.coordinates[0][0] : ''} //see comment in /app/api/types.ts
               onChange={(e) => handleCoordinateChange('y', e.target.value)}
               fullWidth
             />
@@ -203,6 +211,15 @@ export function EditMarkerDialog(props: EditMarkerDialogProps) {
                   />
                 </Grid>
               ))} */}
+
+              {/* TODO: Add confirmation when clicking delete */}
+              {newMarker.id && (
+                <Grid size={12} display={'flex'} justifyContent={'center'}>
+                  <Button variant='contained' color='error' onClick={handleDeleteMarker}>
+                    Delete Marker: {newMarker.id}
+                  </Button>
+                </Grid>
+              )}
             </Grid>
           </AccordionDetails>
         </Accordion>

@@ -46,13 +46,27 @@ export default function MapWithQuery() {
       });
   };
 
+  // Used to delete a marker from the database
+  const deleteMarker = async (id: number) => {
+    fetch(`${baseUrl}/api/delete-marker?id=${id}`)
+      .then((response) => response.json())
+      .then(async () => {
+        await queryMarkers(); // We need to refetch the markers after deleting one
+        setShowSuccessSnackbar(true);
+      })
+      .catch((err) => {
+        console.error('Querying markers failed:', err);
+        setShowErrorSnackbar(true);
+      });
+  };
+
   useEffect(() => {
     queryMarkers();
   }, []);
 
   return (
     <div>
-      <Map markers={markers} onUpsertMarker={upsertMarker} />
+      <Map markers={markers} onUpsertMarker={upsertMarker} onDeleteMarker={deleteMarker} />
 
       {/* Success and Error Snackbars */}
       <Snackbar open={showSuccessSnackbar} autoHideDuration={6000} onClose={() => setShowSuccessSnackbar(false)}>
