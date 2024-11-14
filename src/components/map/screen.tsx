@@ -13,8 +13,8 @@ import { Popup } from '../marker/popup';
 import { EditMarkerDialog } from '../marker/edit';
 import { useRef, useState } from 'react';
 import { EditFilterDialog } from '../filter/edit';
-import { Fab } from '@mui/material';
-import { FilterAlt } from '@mui/icons-material';
+import { CircularProgress, Dialog, DialogContent, Fab } from '@mui/material';
+import { Add, FilterAlt } from '@mui/icons-material';
 import { LeafletMouseEvent, Map as RLMap } from 'leaflet';
 
 interface MapProps {
@@ -29,7 +29,9 @@ export function Map(props: MapProps) {
   const [showEditMarkerDialog, setShowEditMarkerDialog] = useState(false);
   const [showEditFilterDialog, setShowEditFilterDialog] = useState(false);
 
-  const [selectedMarker, setSelectedMarker] = useState<MapMarkerData>();
+  const [selectedMarker, setSelectedMarker] = useState<MapMarkerData>({
+    coordinates: [['', '']] as any,
+  } as MapMarkerData);
 
   const [fliterSettings, setFilterSettings] = useState({
     markerLimit: [0, 300],
@@ -42,11 +44,19 @@ export function Map(props: MapProps) {
     setSelectedMarker(marker);
   };
 
-  const handleAddMarker = (mouseEvent: LeafletMouseEvent) => {
-    const lat = mouseEvent.latlng.lat;
-    const long = mouseEvent.latlng.lng;
+  const handleAddMarker = (
+    mouseEvent?: LeafletMouseEvent, // A mouseEvent will only be passed in if the user 'double clicks' to add a marker. This means the lat and long coordinates will be retrieved from where the mouse is
+  ) => {
+    // User 'double clicks' to add marker
+    if (mouseEvent) {
+      const lat = mouseEvent.latlng.lat;
+      const long = mouseEvent.latlng.lng;
+      setSelectedMarker({ coordinates: [[long, lat]] as any } as MapMarkerData);
+    } else {
+      // User clicks 'plus' button to add marker
+      setSelectedMarker({ coordinates: [['', '']] as any } as MapMarkerData);
+    }
 
-    setSelectedMarker({ coordinates: [[long, lat]] as any } as MapMarkerData);
     setShowEditMarkerDialog(true);
   };
 
@@ -69,9 +79,7 @@ export function Map(props: MapProps) {
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       />
 
-      {markers &&
-        //TODO: Make marker loading state
-
+      {markers ? (
         markers.slice(fliterSettings.markerLimit[0], fliterSettings.markerLimit[1]).map((markerData) => {
           const id = markerData.id;
           const coordinates = markerData.coordinates && (markerData.coordinates[0] as any); //Yucky (see comment in /app/api/types.ts)
@@ -82,8 +90,18 @@ export function Map(props: MapProps) {
                 <Popup markerData={markerData} onEditMarker={handleEditMarker} />
               </Marker>
             );
-        })}
+        })
+      ) : (
+        // Marker loading state
+        <Dialog open={true}>
+          <DialogContent className='flex flex-col justify-center items-center space-y-8'>
+            <CircularProgress />
+            Loading Markers
+          </DialogContent>
+        </Dialog>
+      )}
 
+      {/* Dialog components */}
       <EditMarkerDialog
         open={showEditMarkerDialog}
         marker={selectedMarker}
@@ -103,6 +121,7 @@ export function Map(props: MapProps) {
         }}
       />
 
+      {/* HUD Components */}
       <Fab
         style={{ position: 'absolute', top: 12, right: 12 }}
         variant='extended'
@@ -112,6 +131,10 @@ export function Map(props: MapProps) {
       >
         <FilterAlt sx={{ mr: 1 }} />
         Filter
+      </Fab>
+
+      <Fab style={{ position: 'absolute', bottom: 24, right: 16 }} color='primary' onClick={() => handleAddMarker()}>
+        <Add />
       </Fab>
     </MapContainer>
   );

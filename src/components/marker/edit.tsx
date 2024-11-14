@@ -20,20 +20,31 @@ import { MapMarkerData } from '@/app/api/types';
 
 interface EditMarkerDialogProps {
   open: boolean;
-  marker?: MapMarkerData; // If marker, or marker.id, is not passed in, we treat this screen as an 'Add Marker' screen
+  marker: MapMarkerData;
   onClose: VoidFunction;
   onSubmit: (newMarker: MapMarkerData) => Promise<void>;
   onDeleteMarker: (id: number) => Promise<void>;
 }
 
-// TODO: This screen is really slow when changing any field, especially typing. This is probably because we are updating the newMarker state every time the field is edited. FIND A BETTER WAY TO DO THIS!
+/* 
+NOTE: This component is used for both editing a marker and adding one. 
+If a marker's id is provided, we treat this screen as 'editing' the marker. 
+If id is not provided, we treat this screen as adding a marker.
+The 'upsert-marker' endpoint will check if an id is provided and make the appropriate modifications to the database 
+*/
+
 export function EditMarkerDialog(props: EditMarkerDialogProps) {
   const { open, marker, onClose, onSubmit, onDeleteMarker } = props;
 
-  const emptyMarker = {} as MapMarkerData; // We use this empty marker when adding a new marker
-
   const [isLoading, setIsLoading] = useState(false); // Used to show loading circle when clicking submit (does this actually work? I don't see the loading circle???????)
-  const [newMarker, setNewMarker] = useState<MapMarkerData>(marker ?? emptyMarker); // Marker state variable that gets updated when user edits a field
+  const [newMarker, setNewMarker] = useState<MapMarkerData>(marker); // Marker state variable that gets updated when user edits a field
+
+  // This boolean checks if the user enters both long and lat coordinates. Submit button is disabled when this is false
+  const isCoordinatesSupplied =
+    newMarker.coordinates !== null &&
+    newMarker.coordinates[0] !== null &&
+    newMarker.coordinates[0][0] !== '' &&
+    newMarker.coordinates[0][1] !== '';
 
   // Helper function to update marker data in state
   const handleFieldChange = (field: keyof MapMarkerData, value: any) => {
@@ -69,8 +80,7 @@ export function EditMarkerDialog(props: EditMarkerDialogProps) {
 
   useEffect(() => {
     // Needed to reset marker when Dialog is opened or closed without saving
-    if (marker) setNewMarker(marker);
-    else setNewMarker(emptyMarker);
+    setNewMarker(marker);
   }, [open]);
 
   return (
@@ -101,6 +111,13 @@ export function EditMarkerDialog(props: EditMarkerDialogProps) {
             />
           </Grid>
         </Grid>
+
+        {/* We only want to show this hint when the user doesn't enter coordinates */}
+        {!isCoordinatesSupplied && (
+          <DialogContentText style={{ marginTop: 4, fontStyle: 'italic', fontSize: 10 }}>
+            Hint: You can also double click anywhere on the map to add a marker and autopopulate the coordinates
+          </DialogContentText>
+        )}
 
         {/* isRedLightCamera */}
         <FormControlLabel
@@ -227,7 +244,7 @@ export function EditMarkerDialog(props: EditMarkerDialogProps) {
 
       <DialogActions>
         <Button onClick={onClose}>Nevermind</Button>
-        <Button variant='contained' disabled={isLoading} onClick={handleSubmit}>
+        <Button variant='contained' disabled={isLoading || !isCoordinatesSupplied} onClick={handleSubmit}>
           {isLoading && <CircularProgress style={{ marginRight: 10 }} size={16} />}
           Submit
         </Button>
