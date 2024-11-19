@@ -61,7 +61,7 @@ export default function MapWithQuery() {
   };
 
   useEffect(() => {
-    queryMarkers();
+    if (!markers) queryMarkers(); // Initial marker fetch. We only want to do this once
   }, []);
 
   return (
