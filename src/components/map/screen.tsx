@@ -35,11 +35,12 @@ export function Map(props: MapProps) {
 
   const [filterSettings, setFilterSettings] = useState<FilterSettings>(() => {
     const savedSettings = localStorage.getItem('filterSettings');
-    return savedSettings ? JSON.parse(savedSettings) : {
-      markerLimit: [0, 300],
-      data: {
-      },
-    };
+    return savedSettings
+      ? JSON.parse(savedSettings)
+      : {
+          markerLimit: [0, 300],
+          data: {},
+        };
   });
 
   useEffect(() => {
@@ -90,27 +91,28 @@ export function Map(props: MapProps) {
 
       {markers ? (
         // filter markers
-        markers.slice(filterSettings.markerLimit[0], filterSettings.markerLimit[1]).filter((markerData) => {
-          
-          return (Object.keys(filterSettings.data) as (keyof MapMarkerData)[]).every((key) => {
-            return (filterSettings.data[key] == undefined ||
-              filterSettings.data[key] == null ||
-              filterSettings.data[key] == '') ? true :
-                   markerData[key] === filterSettings.data[key];
-          });
-        })
+        markers
+          .slice(filterSettings.markerLimit[0], filterSettings.markerLimit[1])
+          .filter((markerData) => {
+            return (Object.keys(filterSettings.data) as (keyof MapMarkerData)[]).every((key) => {
+              return filterSettings.data[key] == undefined ||
+                filterSettings.data[key] == null ||
+                filterSettings.data[key] == ''
+                ? true
+                : markerData[key] === filterSettings.data[key];
+            });
+          })
           .map((markerData) => {
-          const id = markerData.id;
-          const coordinates = markerData.coordinates && (markerData.coordinates[0] as any); // Yucky (see comment in
-            // /app/api/types.ts)
+            const id = markerData.id;
+            const coordinates = markerData.coordinates && (markerData.coordinates[0] as any); // Yucky (see comment in/app/api/types.ts)
 
-          if (coordinates)
-            return (
-              <Marker position={[coordinates[1], coordinates[0]]} key={id}>
-                <Popup markerData={markerData} onEditMarker={handleEditMarker} />
-              </Marker>
-            );
-        })
+            if (coordinates)
+              return (
+                <Marker position={[coordinates[1], coordinates[0]]} key={id}>
+                  <Popup markerData={markerData} onEditMarker={handleEditMarker} />
+                </Marker>
+              );
+          })
       ) : (
         // Marker loading state
         <Dialog open={true}>

@@ -39,7 +39,7 @@ export function MarkerLimitSlider(props: MarkerLimitSliderProps) {
   };
 
   return (
-    <div className='flex flex-col w-96'>
+    <div className='flex flex-col w-full mb-3'>
       <Typography gutterBottom>Markers shown</Typography>
       <div className='flex flex-row space-x-4'>
         <Room />
