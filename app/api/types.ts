@@ -35,7 +35,6 @@ export interface MapMarkerData {
   // long coordinate: marker.coordinates[0][0]
   // lat coordinate: marker.coordinates[0][1]
   coordinates: string;
-
   isredlightcamera: boolean;
   isuseradded: boolean;
 }

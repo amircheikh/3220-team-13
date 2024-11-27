@@ -11,8 +11,8 @@ import 'leaflet-defaulticon-compatibility';
 import { MapMarkerData } from '@/app/api/types';
 import { Popup } from '../marker/popup';
 import { EditMarkerDialog } from '../marker/edit';
-import { useRef, useState } from 'react';
-import { EditFilterDialog } from '../filter/edit';
+import { useRef, useState, useEffect } from 'react';
+import { EditFilterDialog, FilterSettings } from '../filter/edit';
 import { CircularProgress, Dialog, DialogContent, Fab } from '@mui/material';
 import { Add, FilterAlt } from '@mui/icons-material';
 import { LeafletMouseEvent, Map as RLMap } from 'leaflet';
@@ -33,9 +33,18 @@ export function Map(props: MapProps) {
     coordinates: [['', '']] as any,
   } as MapMarkerData);
 
-  const [fliterSettings, setFilterSettings] = useState({
-    markerLimit: [0, 300],
+  const [filterSettings, setFilterSettings] = useState<FilterSettings>(() => {
+    const savedSettings = localStorage.getItem('filterSettings');
+    return savedSettings ? JSON.parse(savedSettings) : {
+      markerLimit: [0, 300],
+      data: {
+      },
+    };
   });
+
+  useEffect(() => {
+    localStorage.setItem('filterSettings', JSON.stringify(filterSettings));
+  }, [filterSettings]);
 
   const mapRef = useRef<RLMap>(); // Ref used for doubleclick listener
 
@@ -80,9 +89,20 @@ export function Map(props: MapProps) {
       />
 
       {markers ? (
-        markers.slice(fliterSettings.markerLimit[0], fliterSettings.markerLimit[1]).map((markerData) => {
+        // filter markers
+        markers.slice(filterSettings.markerLimit[0], filterSettings.markerLimit[1]).filter((markerData) => {
+          
+          return (Object.keys(filterSettings.data) as (keyof MapMarkerData)[]).every((key) => {
+            return (filterSettings.data[key] == undefined ||
+              filterSettings.data[key] == null ||
+              filterSettings.data[key] == '') ? true :
+                   markerData[key] === filterSettings.data[key];
+          });
+        })
+          .map((markerData) => {
           const id = markerData.id;
-          const coordinates = markerData.coordinates && (markerData.coordinates[0] as any); //Yucky (see comment in /app/api/types.ts)
+          const coordinates = markerData.coordinates && (markerData.coordinates[0] as any); // Yucky (see comment in
+            // /app/api/types.ts)
 
           if (coordinates)
             return (
@@ -112,7 +132,7 @@ export function Map(props: MapProps) {
 
       <EditFilterDialog
         open={showEditFilterDialog}
-        currentFilterSettings={fliterSettings}
+        currentFilterSettings={filterSettings}
         totalMarkers={markers?.length ?? 0}
         onClose={() => setShowEditFilterDialog(false)}
         onSubmit={(newFilterSettings) => {
