@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7760c58e-d847-4480-adfe-0e3d5e47c636" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/app/api/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/filter/edit.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/filter/edit.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/map/screen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/map/screen.tsx" afterDir="false" />
-    </list>
+    <list default="true" id="7760c58e-d847-4480-adfe-0e3d5e47c636" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -71,7 +67,7 @@
       <workItem from="1732648900765" duration="49000" />
       <workItem from="1732648963761" duration="261000" />
       <workItem from="1732649251023" duration="210000" />
-      <workItem from="1732649473126" duration="12391000" />
+      <workItem from="1732649473126" duration="13638000" />
     </task>
     <servers />
   </component>
